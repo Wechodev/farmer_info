@@ -1,0 +1,7 @@
+/Log/*
+/Temp/*
+/vendor
+.env
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
