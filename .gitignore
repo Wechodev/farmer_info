@@ -5,3 +5,5 @@
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
+dev.php
+produce.php
