@@ -25,7 +25,6 @@ class Auth extends ShopBase
         $js_code = $param['js_code'];
 
         $session = '';
-
        /* if ($this->chat_handler instanceof MiniProgram) {
             try {
                 $session = $this->chat_handler->auth()->session($js_code);
@@ -60,7 +59,7 @@ class Auth extends ShopBase
 
             $this->writeJson(200, $data);
         } catch (Exception $e) {
-            $this->writeJson(503, null, '请求失败', false, $e->getMessage());
+            $this->writeJson(503, null, '请求失败', false, $e);
             return;
         }
     }
@@ -83,11 +82,11 @@ class Auth extends ShopBase
                 ];
                 $model->insertData($data);
             }catch (Exception $e) {
-                Trigger::getInstance()->error($e->getMessage(). $open_id);
+                $this->writeJson(503, null, '获取用户信息失败', false, $e);
             }
         }
 
-        return $model;
+        return $account_info;
     }
 
     /**
@@ -135,7 +134,8 @@ class Auth extends ShopBase
         $model = new AccountModel();
         $result = $model->updateData($update_data , $open_id);
         if (!$result) {
-            Trigger::getInstance()->error("用户信息更新失败". $open_id);
+            $this->writeJson(503, null, '用户信息更新失败', false);
+            return;
         }
 
         $this->writeJson(200, ['user_info'=>$result]);

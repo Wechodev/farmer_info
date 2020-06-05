@@ -2,6 +2,8 @@
 
 namespace App\Model\Farm;
 
+use EasySwoole\ORM\Collection\Collection;
+
 /**
  * Class SupplyModel
  * @property $id
@@ -12,8 +14,9 @@ namespace App\Model\Farm;
  * @property $place
  * @property $phone
  * @property $subject
+ * @property $picture
+ * @property $tag
  * @property $is_owner
- * @property $account
  * @package App\Model\Farm
  */
 class SupplyModel extends BaseModel
@@ -22,9 +25,10 @@ class SupplyModel extends BaseModel
 
     protected $primaryKey = 'id';
 
+
     public function accounts()
     {
-        return $this->hasOne(AccountModel::class, null, 'id', 'account_id');
+        return $this->hasOne(AccountModel::class, null, 'account_id', 'id');
     }
 
     public function getAll(int $page = 1, string $keyword = null, int $pageSize = 10, $account_no=null)
@@ -38,7 +42,13 @@ class SupplyModel extends BaseModel
             $where['account_id'] = $account_no;
         }
         $where['status'] = 1;
-        $list  = $this->with(['styles', 'shops'])->limit($pageSize * ($page - 1), $pageSize)->order('distant', 'DESC')->withTotalCount()->all($where);
+
+        $list  = $this
+            ->with(['accounts'])
+            ->limit($pageSize * ($page - 1), $pageSize)
+            ->order('supply.id', 'DESC')->withTotalCount()
+            ->all($where);
+
         $total = $this->lastQueryResult()->getTotalCount();
 
         return ['total' => $total, 'list' => $list];
@@ -46,9 +56,12 @@ class SupplyModel extends BaseModel
 
     public function getInfo(int $supply_id):SupplyModel
     {
-        $this->get(['id'=>$supply_id])->with(['accounts']);
+        $find =   $this->with(['accounts'])->get($supply_id);
+        $find->views = $find->views + 1;
 
-        return  $this;
+        $this->updateSupply(['supply_id'=>$find->id, 'views'=>$find->views]);
+
+        return  $find;
     }
 
     public function createSupply(array $data):SupplyModel
@@ -60,6 +73,8 @@ class SupplyModel extends BaseModel
         $this->place = $data['place'];
         $this->content = $data['content'];
         $this->phone = $data['phone'];
+        $this->picture = $data['picture'];
+        $this->tag = $data['tag'];
 
         $this->id = $this->save();
 

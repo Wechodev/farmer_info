@@ -12,6 +12,7 @@ namespace App\Model\Farm;
  * @property $order_amount
  * @property $pay_amount
  * @property $out_trade_no
+ * @property $order_info
  * @package App\Model\Farm
  */
 class OrderModel extends BaseModel
@@ -22,12 +23,12 @@ class OrderModel extends BaseModel
 
     public function accounts()
     {
-        return $this->hasOne(AccountModel::class, null, 'id', 'account_id');
+        return $this->hasOne(AccountModel::class, null, 'account_id', 'id');
     }
 
     public function orderInfo()
     {
-        return $this->hasMany(OrderInfoModel::class, null, 'order_id', 'id');
+        return $this->hasMany(OrderInfoModel::class, null, 'out_trade_no', 'order_no');
     }
 
     public function getAll(int $page = 1, int $pageSize = 10, $account_no=null)
@@ -44,9 +45,9 @@ class OrderModel extends BaseModel
         return ['total' => $total, 'list' => $list];
     }
 
-    public function getInfo(string $out_trade_no):OrderModel
+    public function getInfo(string $out_trade_no, string $account_id):OrderModel
     {
-        $this->get(['out_trade_no'=>$out_trade_no])->with(['order_info']);
+        return $this->with(['products', 'orderInfo'])->get(['out_trade_no'=>$out_trade_no, 'account_id'=>$account_id]);
     }
 
     public function createOrder(array $data):OrderModel
@@ -60,7 +61,7 @@ class OrderModel extends BaseModel
 
         $this->id = $this->save();
 
-        return $this->getInfo($data['out_trade_no']);
+        return $this->where(['out_trade_no'=>$data['out_trade_no']])->get();
     }
 
     public function updateOrder(array $data):OrderModel
@@ -70,6 +71,6 @@ class OrderModel extends BaseModel
 
         $this->where(['out_trade_no'=>$out_trade_no])->update($data);
 
-        return $this->getInfo($out_trade_no);
+        return $this->where(['out_trade_no'=>$data['out_trade_no']])->get();
     }
 }

@@ -1,5 +1,6 @@
 /Log/*
 /Temp/*
+/Public/*
 /vendor
 .env
 .phpunit.result.cache

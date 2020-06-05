@@ -22,14 +22,31 @@ class Style extends ShopBase
             $data = $style->getAll();
             $this->writeJson(200, $data);
         } catch (\Exception $e) {
-            $this->writeJson(503, null, '获取列表失败', false, $e->getMessage());
+            $this->writeJson(503, null, '获取列表失败', false, $e);
         }
     }
 
     /**
+     * 获取详情
+     * @Param (name="style_id", alias="style_id", required="style_id必须上传", integer="")
+     */
+    public function styleInfo()
+    {
+        $model = new StyleModel();
+        $style_id = $this->input('style_id');
+
+        try {
+            $find_model = $model->getInfo($style_id);
+
+            $this->writeJson(200, $find_model);
+        } catch (Exception $e) {
+            $this->writeJson(404, null, '获取style失败', false, $e);
+        }
+    }
+    /**
      * 创建类型
      * @Param (name="name",alias="name", reqiured="名字必须上传", string="")
-     * @Param (name="file",alias="file", required="logo必须上传", string="")
+     * @Param (name="picture",alias="picture", required="logo必须上传", string="")
      * @Param (name="parent_id",alias="parent_id", optional="", integer="")
      */
     public function createStyle()
@@ -40,7 +57,7 @@ class Style extends ShopBase
             $style_model->createInfo($param);
             $this->writeJson(200, $style_model);
         }catch (\Exception $e) {
-            $this->writeJson(503, null, '创建类型失败', false, $e->getMessage());
+            $this->writeJson(503, null, '创建类型失败', false, $e);
         }
     }
 
@@ -48,7 +65,7 @@ class Style extends ShopBase
      * 更新类型
      * @Param (name="style_id",alias="style_id", reqiured="type_id必须上传", integer="")
      * @Param (name="name",alias="name", reqiured="名字必须上传", string="")
-     * @Param (name="file",alias="file", optional="", string="")
+     * @Param (name="picture",alias="picture", optional="", string="")
      * @Param (name="parent_id",alias="parent_id", optional="", integer="")
      */
     public function updateStyle()
@@ -60,7 +77,7 @@ class Style extends ShopBase
             $update_data = $style_model->updateInfo($data);
             $this->writeJson(200, $update_data);
         } catch (\Exception $e) {
-            $this->writeJson(503, null, '更新类型失败', false, $e->getMessage());
+            $this->writeJson(503, null, '更新类型失败', false, $e);
         }
     }
 
@@ -79,9 +96,9 @@ class Style extends ShopBase
 
             $this->writeJson(200, ['delete_status'=>$result]);
         } catch (Exception $e) {
-            $this->writeJson(503, null, '删除类型失败', false, $e->getMessage());
+            $this->writeJson(503, null, '删除类型失败', false, $e);
         } catch (\Throwable $e) {
-            $this->writeJson(503, null, '删除类型失败', false, $e->getMessage());
+            $this->writeJson(503, null, '删除类型失败', false, $e);
         }
     }
 

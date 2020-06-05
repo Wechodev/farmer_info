@@ -30,10 +30,10 @@ class ShopBase extends ApiBase
             $this->chat_handler->getConfig()->setAppId($app_id)->setAppSecret($app_secret);
 
             //白名单判断
-            if (in_array($action, $this->whiteList)) {
+            if ($this->whiteList && in_array($action, $this->whiteList)) {
                 return true;
             }
-            var_dump($this->getWho());
+
             //获取登入信息
             if (!$this->getWho()) {
                 $this->writeJson(Status::CODE_UNAUTHORIZED, '', '无效的token', false);

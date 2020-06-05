@@ -30,6 +30,7 @@ abstract class ApiBase extends BaseController
             $token_array = explode(' ', $this->request()->getHeader('authorization')[0]);
 
             $this->login_user = $this->decodeToken($token_array[1]);
+
         }
 
         return true;

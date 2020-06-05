@@ -17,8 +17,9 @@ namespace App\Model\Farm;
  * @property $detail_picture
  * @property $shop_id
  * @property $is_owner
- * @property $shop
- * @property $style
+ * @property $shops
+ * @property $styles
+ * @property $is_collect
  */
 class ProductModel extends BaseModel
 {
@@ -29,14 +30,13 @@ class ProductModel extends BaseModel
 
     public function shops()
     {
-        return $this->hasOne(ShopModel::class, null, 'id', 'shop_id');
+        return $this->hasOne(ShopModel::class, null, 'shop_id', 'id');
     }
 
     public function styles()
     {
-        return $this->hasOne(StyleModel::class, null, 'id', 'type_id');
+        return $this->hasOne(StyleModel::class, null, 'type_id', 'id');
     }
-
 
     /**
      * 获取全部商品
@@ -55,7 +55,12 @@ class ProductModel extends BaseModel
             $where['name'] = ['%' . $keyword . '%','like'];
         }
         $where['status'] = 1;
-        $list  = $this->with(['styles', 'shops'])->limit($pageSize * ($page - 1), $pageSize)->order('distant', 'DESC')->withTotalCount()->all($where);
+        $list  = $this->with(['styles', 'shops'])
+            ->limit($pageSize * ($page - 1), $pageSize)
+            ->order('id', 'DESC')
+            ->withTotalCount()
+            ->all($where);
+
         $total = $this->lastQueryResult()->getTotalCount();
 
         return ['total' => $total, 'list' => $list];
@@ -64,9 +69,7 @@ class ProductModel extends BaseModel
 
     public function getInfo(int $product_id):ProductModel
     {
-        $this->get(['id'=>$product_id])->with(['styles', 'shops']);
-
-        return  $this;
+        return $this->with(['styles', 'shops'])->get($product_id);
     }
 
     public function createInfo(array $data):ProductModel
@@ -77,8 +80,8 @@ class ProductModel extends BaseModel
         $this->type_id = $data['type_id'];
         $this->describe = $data['describe'];
         $this->shop_id = $data['shop_id'];
-        $this->picture = $data['file'];
-        $this->detail_picture = $data['detail_file'];
+        $this->picture = $data['picture'];
+        $this->detail_picture = $data['detail_picture'];
         $this->status = 1;
 
         $this->id = $this->save();

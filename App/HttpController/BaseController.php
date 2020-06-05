@@ -50,7 +50,7 @@ class BaseController extends AnnotationController
 
         $jwt_object->setAlg('HMACSHA256'); // 加密方式
         $jwt_object->setAud('user'); // 用户
-        $jwt_object->setExp(time()+3600); // 过期时间
+        $jwt_object->setExp(time()+36000); // 过期时间 暂时时间长一点
         $jwt_object->setIat(time()); // 发布时间
         $jwt_object->setIss('farm_app'); // 发行人
         $jwt_object->setJti(md5(time())); // jwt id 用于标识该jwt
@@ -121,8 +121,8 @@ class BaseController extends AnnotationController
                 'data' => $result,
             );
 
-            if ($bug_info) {
-                Trigger::getInstance()->error($bug_info);
+            if ($bug_info && $bug_info instanceof \Exception) {
+                Trigger::getInstance()->error($bug_info->getMessage().':'.$bug_info->getFile());
             }
             $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
             $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');

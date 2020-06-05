@@ -14,6 +14,7 @@ namespace App\Model\Farm;
  * @property $account_id
  * @property $is_owner
  * @property $tag
+ * @property $is_collect
  * @package App\Model\Farm
  */
 class ShopModel extends BaseModel
@@ -57,7 +58,7 @@ class ShopModel extends BaseModel
                 ) + COS('.$lat.' * PI() / 180) * COS(lat * PI() / 180) * POW(
                     SIN(
                         (
-                            '.$lng.' * PI() / 180 - lon * PI() / 180
+                            '.$lng.' * PI() / 180 - lng * PI() / 180
                         ) / 2
                     ),
                     2
@@ -70,22 +71,15 @@ class ShopModel extends BaseModel
         return ['total' => $total, 'list' => $list];
     }
 
-    public function getInfo(int $shop_id):ShopModel
-    {
-        $this->get(['id'=>$shop_id]);
-
-        return  $this;
-    }
-
     public function createInfo(array $data):ShopModel
     {
-        $this->picture = $data['file'];
+        $this->picture = $data['picture'];
         $this->name = $data['name'];
         $this->phone = $data['phone'];
         $this->address = $data['address'];
         $this->boss_name = $data['boss_name'];
-        $this->lat = $data['lat'];
-        $this->lng = $data['lng'];
+        $this->lat = $data['lat']??0;
+        $this->lng = $data['lng']??0;
         $this->account_id = $data['user_id'];
         $this->tag = $data['tag'];
         $this->id = $this->save();
@@ -103,6 +97,6 @@ class ShopModel extends BaseModel
 
         $this->where(['id'=>$shop_id])->update($data);
 
-        return  $this->getInfo($shop_id);
+        return  $this->get($shop_id);
     }
 }

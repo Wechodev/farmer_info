@@ -6,7 +6,7 @@ use EasySwoole\ORM\AbstractModel;
 
 class BaseModel extends AbstractModel
 {
-    protected $autoTimeStamp = true;
+    protected $autoTimeStamp = 'datetime';
     protected $createTime = 'created';
     protected $updateTime = 'modified';
 

@@ -23,26 +23,51 @@ class Order extends ShopBase
         $limit = (int)$this->input('limit', 20);
         $is_main = (int)$this->input('is_my', 0);
 
-        $user_id = $this->login_user['account']['id'];
+        $user_id = $this->who['id'];
         $model = new OrderModel();
 
         try {
             $data = $model->getAll($page, $limit, ($account_id= $is_main?$user_id:null));
             $this->writeJson(200, $data);
         } catch (Exception $e) {
-            $this->writeJson(404, null,'查询列表失败', false, $e->getMessage());
+            $this->writeJson(404, null,'查询列表失败', false, $e);
         } catch (\Throwable $e) {
-            $this->writeJson(404, null, '查询列表失败', false, $e->getMessage());
+            $this->writeJson(404, null, '查询列表失败', false, $e);
         }
 
     }
 
+    /**
+     * 获取订单详情
+     * @Param(name="order_no", alias="order_no", required="", string="")
+     */
+    public function orderInfo()
+    {
+        $order_no = $this->request()->getQueryParam('order_no');
+        $order_model = new OrderModel();
+        $account_no = $this->who['id'];
+
+        try {
+            $info = $order_model->getInfo($order_no, $account_no);
+            $this->writeJson(200, $info);
+        } catch (Exception $e) {
+            $this->writeJson(404, null,'查询详情失败', false, $e);
+        } catch (\Throwable $e) {
+            $this->writeJson(404, null, '查询详情失败', false, $e);
+        }
+    }
+
+    /**
+     * 创建订单
+     * @Param (name="cart_ids",alias="cart_ids", required="", string="")
+     * @Param (name="address",alias="address", required="", string="")
+     */
     public function createOrder()
     {
         $order_info = $this->request()->getParsedBody();
 
-        $cat_id_array = explode(',', $order_info['cart_id']);
-        $user_id = $this->login_user['account']['id'];
+        $cat_id_array = explode(',', $order_info['cart_ids']);
+        $user_id = $this->who['id'];
 
         $cart_model = new CartModel();
         $order_model = new OrderModel();
@@ -51,24 +76,29 @@ class Order extends ShopBase
         $order_amount = 0;
         $order_no = $this->createOrderNo();
 
+        $info_data = [];
         try {
-            $cart_list = $cart_model->getAll($cat_id_array);
-            $cart_list->each(function ($item) use (&$pay_amount, &$order_amount, $order_no, $order_info_model) {
-                $pay_amount_single = $item->product->price * $item->quantity;
-                $order_amount_single = $item->product->price * $item->quantity;
+            $cart_list = $cart_model->getCartToOrder($cat_id_array);
 
-                $info_data = [
+            foreach ($cart_list as $item) {
+                $pay_amount_single = $item->products->price * $item->quantity;
+                $order_amount_single = $item->products->price * $item->quantity;
+
+                $info_data[] = [
                     'good_id' => $item->good_id,
                     'quantity' => $item->quantity,
                     'pay_amount' => $pay_amount_single,
                     'order_amount' => $order_amount_single,
+                    'order_no' => $order_no,
+                    'good_name' => $item->name,
+                    'good_picture' => $item->picture,
                 ];
 
                 $pay_amount += $pay_amount_single;
                 $order_amount += $order_amount_single;
+            }
 
-                $order_info_model->createInfo($info_data);
-            });
+            $order_info_model->saveAll($info_data);
 
             $order_array = [
                 'address' => $order_info['address'],
@@ -79,30 +109,34 @@ class Order extends ShopBase
             ];
 
             $order_create_result = $order_model->createOrder($order_array);
-            $cart_model->destroy($cat_id_array);
+            $cart_model->where('id', $cat_id_array, 'IN')->destroy();
 
             $this->writeJson(200, $order_create_result);
         } catch (Exception $e) {
-            $this->writeJson(404, null,'创建订单失败', false, $e->getMessage());
+            $this->writeJson(404, null,'创建订单失败', false, $e);
+            return;
         } catch (\Throwable $e) {
-            $this->writeJson(404, null,'创建订单失败', false, $e->getMessage());
+            $this->writeJson(404, null,'创建订单失败', false, $e);
+            return;
         }
 
     }
 
+    /**
+     * 不允许修改订单
+     */
     public function updateOrder()
     {
+        $order_model = new OrderModel();
+
         try {
             $update_data = $this->request()->getParsedBody();
 
-            $order_model = new OrderModel();
             $order_info = $order_model->updateOrder($update_data);
 
             $this->writeJson(200, $order_info);
         } catch  (Exception $e) {
-            $this->writeJson(404, null,'修改订单失败失败', false, $e->getMessage());
+            $this->writeJson(404, null,'修改订单失败失败', false, $e);
         }
-
     }
-
 }

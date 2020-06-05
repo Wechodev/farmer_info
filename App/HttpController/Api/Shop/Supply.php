@@ -24,35 +24,46 @@ class Supply extends ShopBase
         $limit = (int)$this->input('limit', 20);
         $is_main = (int)$this->input('is_my', 0);
 
-        $user_id = $this->login_user['account']['id'];
+        $user_id = $this->who['id'];
         $model = new SupplyModel();
 
         try {
-            $data = $model->getAll($page, $this->input('keyword'), $limit, ($account_id= $is_main?$user_id:null));
+            $data = $model->getAll($page, $this->input('keyword'), $limit, ($account_id=$is_main?$user_id:null));
             $this->writeJson(200, $data);
         } catch (Exception $e) {
-            $this->writeJson(404, null,'查询列表失败', false, $e->getMessage());
+            $this->writeJson(404, null,'查询列表失败', false, $e);
         } catch (\Throwable $e) {
-            $this->writeJson(404, null, '查询列表失败', false, $e->getMessage());
+            $this->writeJson(404, null, '查询列表失败', false, $e);
         }
-
     }
 
+    /**
+     * @Param(name="supply_id",alias="supply_id", required="", integer="")
+     */
     public function supplyInfo()
     {
-        $user_id = $this->login_user['account']['id'];
+        $user_id = $this->who['id'];
         $supply_id = $this->input('supply_id');
 
         $supply = new SupplyModel();
-        $supply->getInfo($supply_id);
+        $find_model = $supply->getInfo($supply_id);
 
-        if ($supply->account_id==$user_id) {
-            $supply->is_owner = true;
+        if ($find_model->account_id==$user_id) {
+            $find_model->is_owner = true;
         }
 
-        $this->writeJson(200, $supply);
+        $this->writeJson(200, $find_model);
     }
 
+    /**
+     * 创建供需关系
+     * @Param(name="subject", alias="subject", required="", string="")
+     * @Param(name="place", alias="place", required="", string="")
+     * @Param(name="content", alias="content", required="", string="")
+     * @Param(name="phone", alias="phone", required="", string="")
+     * @Param(name="picture", alias="picture", required="", string="")
+     * @Param(name="tag", alias="tag", required="", string="")
+     */
     public function createSupply()
     {
         $data = $this->request()->getParsedBody();
@@ -63,10 +74,20 @@ class Supply extends ShopBase
             $supply_model->createSupply($data);
             $this->writeJson(200, $supply_model);
         }  catch (\Exception $e) {
-            $this->writeJson(503, null, '创建需求失败', false, $e->getMessage());
+            $this->writeJson(503, null, '创建需求失败', false, $e);
         }
     }
 
+    /**
+     * 创建供需关系
+     * @Param(name="subject", alias="subject", required="", string="")
+     * @Param(name="place", alias="place", required="", string="")
+     * @Param(name="content", alias="content", required="", string="")
+     * @Param(name="phone", alias="phone", required="", string="")
+     * @Param(name="picture", alias="picture", optional="", string="")
+     * @Param(name="tag", alias="tag", required="", string="")
+     * @Param(name="supply_id", alias="supply_id", required="", integer="")
+     */
     public function updateSupply()
     {
         $data = $this->request()->getParsedBody();
@@ -74,25 +95,28 @@ class Supply extends ShopBase
 
         $supply_model = new SupplyModel();
         try {
-            $supply_model->updateSupply($data);
-            $this->writeJson(200, $supply_model);
+            $new_model = $supply_model->updateSupply($data);
+            $this->writeJson(200, $new_model);
         }  catch (\Exception $e) {
-            $this->writeJson(503, null, '创建需求失败', false, $e->getMessage());
+            $this->writeJson(503, null, '创建需求失败', false, $e);
         }
     }
 
+    /**
+     * @Param(name="supply_id", alias="supply_id", required="", string="")
+     */
     public function deleteSupply()
     {
-        $product_id = $this->request()->getBody()['supply_id'];
+        $product_id = $this->input('supply_id');
 
         $product_model = new SupplyModel();
         try {
             $result = $product_model->updateSupply(['status'=>0, 'supply_id'=>$product_id]);
-            $this->writeJson(200, ['delete_status'=>$result]);
+            $this->writeJson(200, ['delete_status'=>$result?1:0]);
         } catch (Exception $e) {
-            $this->writeJson(503, null, '删除产品失败', false, $e->getMessage());
+            $this->writeJson(503, null, '删除产品失败', false, $e);
         } catch (\Throwable $e) {
-            $this->writeJson(503, null, '删除产品失败', false, $e->getMessage());
+            $this->writeJson(503, null, '删除产品失败', false, $e);
         }
     }
 }
