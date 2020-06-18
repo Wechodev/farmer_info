@@ -79,7 +79,7 @@ class Supply extends ShopBase
     }
 
     /**
-     * 创建供需关系
+     * 更新供需关系
      * @Param(name="subject", alias="subject", required="", string="")
      * @Param(name="place", alias="place", required="", string="")
      * @Param(name="content", alias="content", required="", string="")

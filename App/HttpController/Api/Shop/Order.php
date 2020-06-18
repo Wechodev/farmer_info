@@ -6,6 +6,7 @@ namespace App\HttpController\Api\Shop;
 use App\Model\Farm\CartModel;
 use App\Model\Farm\OrderInfoModel;
 use App\Model\Farm\OrderModel;
+use App\Model\Farm\ProductModel;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\ORM\Exception\Exception;
 class Order extends ShopBase
@@ -49,10 +50,13 @@ class Order extends ShopBase
 
         try {
             $info = $order_model->getInfo($order_no, $account_no);
+
             $this->writeJson(200, $info);
         } catch (Exception $e) {
+            var_dump($e->getMessage());
             $this->writeJson(404, null,'查询详情失败', false, $e);
         } catch (\Throwable $e) {
+            var_dump($e->getMessage());
             $this->writeJson(404, null, '查询详情失败', false, $e);
         }
     }

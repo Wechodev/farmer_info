@@ -2,6 +2,8 @@
 
 namespace App\Model\Farm;
 
+use EasySwoole\Mysqli\Exception\Exception;
+
 /**
  * 订单详情
  * Class OrderModel
@@ -12,7 +14,7 @@ namespace App\Model\Farm;
  * @property $order_amount
  * @property $pay_amount
  * @property $out_trade_no
- * @property $order_info
+ * @property $orderInfo
  * @package App\Model\Farm
  */
 class OrderModel extends BaseModel
@@ -47,7 +49,7 @@ class OrderModel extends BaseModel
 
     public function getInfo(string $out_trade_no, string $account_id):OrderModel
     {
-        return $this->with(['products', 'orderInfo'])->get(['out_trade_no'=>$out_trade_no, 'account_id'=>$account_id]);
+        return $this->with(['orderInfo'])->get(['out_trade_no' => $out_trade_no, 'account_id' => $account_id]);
     }
 
     public function createOrder(array $data):OrderModel
