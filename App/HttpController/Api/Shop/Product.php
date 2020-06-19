@@ -63,7 +63,8 @@ class Product extends ShopBase
         try {
             $find_model = $model->getInfo($product_id);
 
-            $find_model->is_collect = $collect_mode->get(['account_id'=>$user_id, 'good_id'=>$product_id])?true:false;
+            $collect_info = $collect_mode->get(['account_id'=>$user_id, 'good_id'=>$product_id]);
+            $find_model->is_collect = $collect_info->id??false;
 
             if (isset($find_model->shops) && $find_model->shops->account_id==$user_id) {
                 $find_model->is_owner = true;

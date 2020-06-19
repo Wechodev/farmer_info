@@ -15,7 +15,7 @@ use EasySwoole\ORM\Collection\Collection;
  * @property $phone
  * @property $subject
  * @property $picture
- * @property $tag
+ * @property $tags
  * @property $is_owner
  * @package App\Model\Farm
  */
@@ -36,7 +36,9 @@ class SupplyModel extends BaseModel
         if (!empty($keyword))
         {
             $where['subject'] = ['%' . $keyword . '%','like'];
+            $where['tags'] = ['%' . $keyword . '%','like'];
         }
+
         if (!empty($account_no))
         {
             $where['account_id'] = $account_no;
@@ -45,6 +47,7 @@ class SupplyModel extends BaseModel
 
         $list  = $this
             ->with(['accounts'])
+            ->where(['supply.status'=>1])
             ->limit($pageSize * ($page - 1), $pageSize)
             ->order('supply.id', 'DESC')->withTotalCount()
             ->all($where);
@@ -56,10 +59,10 @@ class SupplyModel extends BaseModel
 
     public function getInfo(int $supply_id):SupplyModel
     {
-        $find =   $this->with(['accounts'])->get($supply_id);
-        $find->views = $find->views + 1;
+        $find =  $this->with(['accounts'])->get($supply_id);
+        $views = $find->views + 1;
 
-        $this->updateSupply(['supply_id'=>$find->id, 'views'=>$find->views]);
+        $this->where(['id'=>$supply_id])->update(['views'=>$views]);
 
         return  $find;
     }

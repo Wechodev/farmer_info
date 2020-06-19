@@ -68,7 +68,8 @@ class Shop extends ShopBase
             }
 
             $collect_mode = new CollectModel();
-            $find_data->is_collect = $collect_mode->get(['account_id'=>$user_id, 'shop_id'=>$shop_id])?true:false;
+            $collect_info = $collect_mode->get(['account_id'=>$user_id, 'shop_id'=>$shop_id]);
+            $find_data->is_collect = $collect_info->id??false;
 
             $this->writeJson(200, $find_data);
         } catch (\EasySwoole\Mysqli\Exception\Exception $e) {

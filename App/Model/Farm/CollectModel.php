@@ -35,7 +35,7 @@ class CollectModel extends BaseModel
         $where['account_id'] = $account_no;
 
         $list  = $this->with([$mode.'s'])
-            ->where($mode=='shop'?'shop':'good'.'_id', 0, '>')
+            ->where(($mode=='shop'?'shop':'good').'_id', 0, '>')
             ->limit($pageSize * ($page - 1), $pageSize)
             ->order('created', 'DESC')
             ->withTotalCount()

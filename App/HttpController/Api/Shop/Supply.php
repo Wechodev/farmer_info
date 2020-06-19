@@ -107,11 +107,13 @@ class Supply extends ShopBase
      */
     public function deleteSupply()
     {
-        $product_id = $this->input('supply_id');
+        $supply_id = $this->input('supply_id');
 
-        $product_model = new SupplyModel();
+        $supply_model = new SupplyModel();
         try {
-            $result = $product_model->updateSupply(['status'=>0, 'supply_id'=>$product_id]);
+
+            $result = $supply_model->updateSupply(['status'=>0, 'supply_id' => $supply_id]);
+
             $this->writeJson(200, ['delete_status'=>$result?1:0]);
         } catch (Exception $e) {
             $this->writeJson(503, null, '删除产品失败', false, $e);
