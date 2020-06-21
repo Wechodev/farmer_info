@@ -159,9 +159,9 @@ class Shop extends ShopBase
 
     /**
      * 处理店铺经纬度
-     * @return array
+     * @return array|mixed|object|void|null
      */
-    public function dealShopData() :array
+    public function dealShopData()
     {
         $update_param = $this->request()->getParsedBody();
         $address = $update_param['address'];
@@ -182,7 +182,9 @@ class Shop extends ShopBase
             }
         } catch (InvalidUrl $e) {
             $this->writeJson(503, null, '请求地图经纬度失败了', false);
+            return;
         }
+
         return  $update_param;
     }
 }
