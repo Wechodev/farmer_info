@@ -74,7 +74,7 @@ class Auth extends ShopBase
 
         $account_info = $model->getInfo($open_id);
 
-        if (!$account_info->id) {
+        if (!isset($account_info->id)) {
             try {
                 $data =  [
                     'open_id' => $open_id,

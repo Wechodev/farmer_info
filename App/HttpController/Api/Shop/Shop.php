@@ -166,8 +166,8 @@ class Shop extends ShopBase
         $update_param = $this->request()->getParsedBody();
         $address = $update_param['address'];
         $instance = \EasySwoole\EasySwoole\Config::getInstance();
-        $app_id = $instance->getConf('MAP.key');
-        $url = $instance->getConf('MAP.url');
+        $app_id = $instance->getConf('MAIN_SERVER.MAP.key');
+        $url = $instance->getConf('MAIN_SERVER.MAP.url');
         $param['lng'] = 0;
         $param['lat'] = 0;
 
