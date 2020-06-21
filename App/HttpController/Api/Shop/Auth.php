@@ -46,14 +46,14 @@ class Auth extends ShopBase
         }
 
         try {
-            $info = $this->findAccountInfo($session['open_id']);
+            $info = $this->findAccountInfo($session['openid']);
             //创建token
             $token = $this->createToken($info);
 
             $data = [
                 'is_need_update' => $info->status==1,
                 'token' => $token,
-                'session_key' => 'ceshi_session'//$session['session_key']
+                'session_key' => $session['session_key']
             ];
 
             $this->writeJson(200, $data);
