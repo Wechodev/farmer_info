@@ -25,7 +25,7 @@ class CommonBase extends ApiBase
 
         $file->moveTo('Public/file/'.$type.'/'.$file_name);
 
-        $file_url =  '/Public/file/'.$type.'/'. $file_name;
+        $file_url =  '/file/'.$type.'/'. $file_name;
 
         $this->writeJson(200, $file_url);
     }
