@@ -25,7 +25,10 @@ class CommonBase extends ApiBase
 
         $file->moveTo('Public/file/'.$type.'/'.$file_name);
 
-        $file_url =  '/file/'.$type.'/'. $file_name;
+        $instance = \EasySwoole\EasySwoole\Config::getInstance();
+        $file_domain = $instance->getConf('MAIN_SERVER.FILE_URL');
+
+        $file_url =  $file_domain.'/file/'.$type.'/'. $file_name;
 
         $this->writeJson(200, $file_url);
     }

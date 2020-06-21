@@ -41,6 +41,7 @@ return [
             'key' => 'xxxxx',
             'url' => 'https://apis.map.qq.com/ws/'
         ],
+        'FILE_URL' => 'https://file.xxxx.com'
     ],
     'TEMP_DIR' => null,
     'LOG_DIR' => null
