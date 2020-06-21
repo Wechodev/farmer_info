@@ -177,8 +177,8 @@ class Shop extends ShopBase
             $map_data = json_decode($get_result->getBody());
 
             if ($map_data->status===0) {
-                $update_param['lng'] = $map_data->result->localtion->lng;
-                $update_param['lat'] = $map_data->result->localtion->lat;
+                $update_param['lng'] = $map_data->result->location->lng;
+                $update_param['lat'] = $map_data->result->location->lat;
             }
         } catch (InvalidUrl $e) {
             $this->writeJson(503, null, '请求地图经纬度失败了', false);
