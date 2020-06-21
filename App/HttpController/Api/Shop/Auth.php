@@ -25,7 +25,7 @@ class Auth extends ShopBase
         $js_code = $param['js_code'];
 
         $session = '';
-       /* if ($this->chat_handler instanceof MiniProgram) {
+        if ($this->chat_handler instanceof MiniProgram) {
             try {
                 $session = $this->chat_handler->auth()->session($js_code);
             } catch (InvalidUrl $e) {
@@ -43,11 +43,10 @@ class Auth extends ShopBase
         if (isset($session['errcode']) && $session['errcode']!=0) {
             $this->writeJson(Status::CODE_UNAUTHORIZED, '', '登陆失败', false);
             return;
-        }*/
+        }
 
         try {
-            //$info = $this->findAccountInfo($session['open_id']);
-            $info = $this->findAccountInfo('ceshiceshiceshi001');
+            $info = $this->findAccountInfo($session['open_id']);
             //创建token
             $token = $this->createToken($info);
 
@@ -120,7 +119,7 @@ class Auth extends ShopBase
         ];
 
         //解析电话号
-     /*   $encrypted_data = $param['encryptedData']??null;
+        $encrypted_data = $param['encryptedData']??null;
         $session_key = $param['session_key']??null;
         $iv = $param['iv']??null;
 
@@ -129,7 +128,7 @@ class Auth extends ShopBase
                 $telephone_array = $this->chat_handler->encryptor()->decryptData($session_key, $iv, $encrypted_data);
                 $update_data['telephone'] = $telephone_array['phoneNumber'];
             }
-        }*/
+        }
 
         $model = new AccountModel();
         $result = $model->updateData($update_data , $open_id);

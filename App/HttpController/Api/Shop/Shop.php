@@ -171,7 +171,7 @@ class Shop extends ShopBase
         $param['lng'] = 0;
         $param['lat'] = 0;
 
-       /* try {
+        try {
             $client = new HttpClient($url . 'geocoder/v1/?address=' . $address . '&key=' . $app_id);
             $get_result = $client->get();
             $map_data = json_decode($get_result->getBody());
@@ -182,7 +182,7 @@ class Shop extends ShopBase
             }
         } catch (InvalidUrl $e) {
             $this->writeJson(503, null, '请求地图经纬度失败了', false);
-        }*/
+        }
         return  $update_param;
     }
 }
