@@ -44,6 +44,7 @@ class ShopModel extends BaseModel
         if (!empty($keyword))
         {
             $where['name'] = ['%' . $keyword . '%','like'];
+            $where['address'] = ['%' . $keyword . '%','like'];
         }
         $list  = $this->field(['*', 'ROUND(
         6378.138 * 2 * ASIN(
