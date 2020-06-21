@@ -29,13 +29,13 @@ class Auth extends ShopBase
             try {
                 $session = $this->chat_handler->auth()->session($js_code);
             } catch (InvalidUrl $e) {
-                $this->writeJson(503, null, '获取token错误', false, $e->getMessage());
+                $this->writeJson(503, null, '获取token错误', false, $e);
                 return;
             } catch (MiniProgramError $e) {
-                $this->writeJson(503, null, '获取token错误', false, $e->getMessage());
+                $this->writeJson(503, null, '获取token错误', false, $e);
                 return;
             } catch (RequestError $e) {
-                $this->writeJson(503, null, '请求失败', false, $e->getMessage());
+                $this->writeJson(503, null, '请求失败', false, $e);
                 return;
             }
         }
