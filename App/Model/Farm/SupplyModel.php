@@ -77,7 +77,7 @@ class SupplyModel extends BaseModel
         $this->content = $data['content'];
         $this->phone = $data['phone'];
         $this->picture = $data['picture'];
-        $this->tag = $data['tag'];
+        $this->tags = $data['tag'];
 
         $this->id = $this->save();
 
