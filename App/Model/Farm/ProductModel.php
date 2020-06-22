@@ -81,6 +81,7 @@ class ProductModel extends BaseModel
         $this->describe = $data['describe'];
         $this->shop_id = $data['shop_id'];
         $this->picture = $data['picture'];
+        $this->price = $data['price'];
         $this->detail_picture = $data['detail_picture'];
         $this->status = 1;
 

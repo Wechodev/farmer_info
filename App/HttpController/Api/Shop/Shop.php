@@ -66,7 +66,7 @@ class Shop extends ShopBase
             if ($find_data->account_id == $user_id) {
                 $find_data->is_owner = true;
             }
-
+            
             $collect_mode = new CollectModel();
             $collect_info = $collect_mode->get(['account_id'=>$user_id, 'shop_id'=>$shop_id]);
             $find_data->is_collect = $collect_info->id??false;
